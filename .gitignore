@@ -40,3 +40,12 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Playwright test artifacts
+.playwright-mcp/
+
+# Screenshots from dev/testing
+screenshot-*.png
+
+# Serena local memories
+.serena/
