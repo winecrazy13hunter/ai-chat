@@ -41,7 +41,8 @@
       "Bash(Select-Object Name)",
       "Bash(Get-ChildItem \"C:\\\\Users\\\\winecrazy\\\\ai-chat\\\\node_modules\\\\ai\" -File)",
       "Bash(Remove-Item *)",
-      "Bash(grep -v \"//\\\\|sandbox\\\\|test\\\\|sample\")"
+      "Bash(grep -v \"//\\\\|sandbox\\\\|test\\\\|sample\")",
+      "Bash(powershell *)"
     ]
   }
 }

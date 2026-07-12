@@ -7,26 +7,29 @@ declare global {
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-let clientPromise: Promise<MongoClient>;
+// モジュールレベルでは接続しない（ビルド時にMONGODB_URIが不要）
+let clientPromise: Promise<MongoClient> | null = null;
 
-function createClientPromise(): Promise<MongoClient> {
+function getClientPromise(): Promise<MongoClient> {
   const uri = process.env.MONGODB_URI;
   if (!uri) throw new Error('MONGODB_URI が環境変数に設定されていません');
-  return new MongoClient(uri).connect();
-}
 
-if (process.env.NODE_ENV === 'development') {
-  // 開発環境: グローバル変数でキャッシュしてホットリロード時の接続増殖を防ぐ
-  if (!global._mongoClientPromise) {
-    global._mongoClientPromise = createClientPromise();
+  if (process.env.NODE_ENV === 'development') {
+    // 開発環境: グローバル変数でキャッシュしてホットリロード時の接続増殖を防ぐ
+    if (!global._mongoClientPromise) {
+      global._mongoClientPromise = new MongoClient(uri).connect();
+    }
+    return global._mongoClientPromise;
   }
-  clientPromise = global._mongoClientPromise;
-} else {
-  clientPromise = createClientPromise();
+
+  if (!clientPromise) {
+    clientPromise = new MongoClient(uri).connect();
+  }
+  return clientPromise;
 }
 
 export async function getDb() {
-  const client = await clientPromise;
+  const client = await getClientPromise();
   return client.db('guitar-tab-bot');
 }
 
