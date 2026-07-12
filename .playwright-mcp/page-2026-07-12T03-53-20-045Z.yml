@@ -1,0 +1,202 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - complementary [ref=e4]:
+      - generic [ref=e5]:
+        - img [ref=e6]
+        - generic [ref=e10]: Guitar TAB Bot
+      - separator [ref=e11]
+      - button "新しい会話" [ref=e13]:
+        - img
+        - text: 新しい会話
+      - separator [ref=e14]
+      - generic [ref=e41]:
+        - button "スモーク・オン・ザ・ウォーターのメインリフのTAB譜を教… 12:53" [ref=e42]:
+          - generic [ref=e43]: スモーク・オン・ザ・ウォーターのメインリフのTAB譜を教…
+          - generic [ref=e44]: 12:53
+        - button "スモーク・オン・ザ・ウォーターのメインリフのTAB譜を教… を削除" [ref=e45]:
+          - img [ref=e46]
+    - generic [ref=e17]:
+      - generic [ref=e49]:
+        - generic [ref=e51]: スモーク・オン・ザ・ウォーターのメインリフのTAB譜を教えて
+        - generic [ref=e53]:
+          - generic [ref=e54]:
+            - generic [ref=e55]: スモーク・オン・ザ・ウォーター / Deep Purple
+            - generic [ref=e56]: メインリフ TAB譜
+          - code [ref=e58]: e |------------------------------------------------| B |------------------------------------------------| G |------------------------------------------------| D |--0--3--5---0--3--6-5---0--3--5---3--0----------| A |--0--3--5---0--3--6-5---0--3--5---3--0----------| E |------------------------------------------------|
+          - generic [ref=e59]:
+            - separator [ref=e60]
+            - generic [ref=e61]: 🎸 演奏のポイント
+            - generic [ref=e62]: コードの形について
+            - generic [ref=e63]:
+              - text: このリフは
+              - strong [ref=e64]: 2弦同時に同じフレットを押さえる「パワーコード風」
+              - text: の奏法です。
+            - generic [ref=e65]: DとAの弦を同時に鳴らすのがポイントです。
+            - generic [ref=e66]: 運指のコツ
+            - table [ref=e68]:
+              - rowgroup [ref=e69]:
+                - row "フレット 推奨する指" [ref=e70]:
+                  - columnheader "フレット" [ref=e71]
+                  - columnheader "推奨する指" [ref=e72]
+              - rowgroup [ref=e73]:
+                - row "0 (開放弦) 何も押さえない" [ref=e74]:
+                  - cell "0 (開放弦)" [ref=e75]
+                  - cell "何も押さえない" [ref=e76]
+                - row "3フレット 人差し指（セーハ気味に）" [ref=e77]:
+                  - cell "3フレット" [ref=e78]
+                  - cell "人差し指（セーハ気味に）" [ref=e79]:
+                    - strong [ref=e80]: 人差し指
+                    - text: （セーハ気味に）
+                - row "5フレット 薬指" [ref=e81]:
+                  - cell "5フレット" [ref=e82]
+                  - cell "薬指" [ref=e83]:
+                    - strong [ref=e84]: 薬指
+                - row "6フレット 小指" [ref=e85]:
+                  - cell "6フレット" [ref=e86]
+                  - cell "小指" [ref=e87]:
+                    - strong [ref=e88]: 小指
+            - generic [ref=e89]: リズムについて
+            - list [ref=e90]:
+              - listitem [ref=e91]:
+                - text: テンポは
+                - strong [ref=e92]: ♩＝120前後
+              - listitem [ref=e93]:
+                - strong [ref=e94]: ズンズン・タン
+                - text: というノリの
+                - strong [ref=e95]: 4/4拍子
+              - listitem [ref=e96]:
+                - text: 音と音の間はしっかり
+                - strong [ref=e97]: ミュート
+                - text: して歯切れよく弾くとカッコよく聴こえます！
+            - separator [ref=e98]
+            - blockquote [ref=e99]:
+              - generic [ref=e100]:
+                - text: 💡
+                - strong [ref=e101]: 初心者の方へ
+              - generic [ref=e102]: このリフはギター入門曲の定番です。
+              - generic [ref=e103]: ゆっくりから練習して、徐々にテンポを上げていきましょう！
+        - generic [ref=e105]: スモーク・オン・ザ・ウォーターのメインリフのTAB譜を教えて
+        - generic [ref=e107]:
+          - generic [ref=e108]:
+            - generic [ref=e109]: スモーク・オン・ザ・ウォーター / Deep Purple
+            - generic [ref=e110]: メインリフ TAB譜
+          - code [ref=e112]: e |------------------------------------------------| B |------------------------------------------------| G |------------------------------------------------| D |--0--3--5---0--3--6-5---0--3--5---3--0----------| A |--0--3--5---0--3--6-5---0--3--5---3--0----------| E |------------------------------------------------|
+          - generic [ref=e113]:
+            - separator [ref=e114]
+            - generic [ref=e115]: 🎸 演奏のポイント
+            - generic [ref=e116]: コードの形について
+            - generic [ref=e117]:
+              - text: このリフは
+              - strong [ref=e118]: 2弦同時に同じフレットを押さえる「パワーコード風」
+              - text: の奏法です。
+            - generic [ref=e119]: DとAの弦を同時に鳴らすのがポイントです。
+            - generic [ref=e120]: 運指のコツ
+            - table [ref=e122]:
+              - rowgroup [ref=e123]:
+                - row "フレット 推奨する指" [ref=e124]:
+                  - columnheader "フレット" [ref=e125]
+                  - columnheader "推奨する指" [ref=e126]
+              - rowgroup [ref=e127]:
+                - row "0 (開放弦) 何も押さえない" [ref=e128]:
+                  - cell "0 (開放弦)" [ref=e129]
+                  - cell "何も押さえない" [ref=e130]
+                - row "3フレット 人差し指（セーハ気味に）" [ref=e131]:
+                  - cell "3フレット" [ref=e132]
+                  - cell "人差し指（セーハ気味に）" [ref=e133]:
+                    - strong [ref=e134]: 人差し指
+                    - text: （セーハ気味に）
+                - row "5フレット 薬指" [ref=e135]:
+                  - cell "5フレット" [ref=e136]
+                  - cell "薬指" [ref=e137]:
+                    - strong [ref=e138]: 薬指
+                - row "6フレット 小指" [ref=e139]:
+                  - cell "6フレット" [ref=e140]
+                  - cell "小指" [ref=e141]:
+                    - strong [ref=e142]: 小指
+            - generic [ref=e143]: リズムについて
+            - list [ref=e144]:
+              - listitem [ref=e145]:
+                - text: テンポは
+                - strong [ref=e146]: ♩＝120前後
+              - listitem [ref=e147]:
+                - strong [ref=e148]: ズンズン・タン
+                - text: というノリの
+                - strong [ref=e149]: 4/4拍子
+              - listitem [ref=e150]:
+                - text: 音と音の間はしっかり
+                - strong [ref=e151]: ミュート
+                - text: して歯切れよく弾くとカッコよく聴こえます！
+            - separator [ref=e152]
+            - blockquote [ref=e153]:
+              - generic [ref=e154]:
+                - text: 💡
+                - strong [ref=e155]: 初心者の方へ
+              - generic [ref=e156]: このリフはギター入門曲の定番です。
+              - generic [ref=e157]: ゆっくりから練習して、徐々にテンポを上げていきましょう！
+        - generic [ref=e161]: スモーク・オン・ザ・ウォーターのメインリフのTAB譜を教えて
+        - generic [ref=e163]:
+          - generic [ref=e164]:
+            - generic [ref=e165]: スモーク・オン・ザ・ウォーター / Deep Purple
+            - generic [ref=e166]: メインリフ TAB譜
+          - code [ref=e168]: e |------------------------------------------------| B |------------------------------------------------| G |------------------------------------------------| D |--0--3--5---0--3--6-5---0--3--5---3--0----------| A |--0--3--5---0--3--6-5---0--3--5---3--0----------| E |------------------------------------------------|
+          - generic [ref=e169]:
+            - separator [ref=e170]
+            - generic [ref=e171]: 🎸 演奏のポイント
+            - generic [ref=e172]: コードの形について
+            - generic [ref=e173]:
+              - text: このリフは
+              - strong [ref=e174]: 2弦同時に同じフレットを押さえる「パワーコード風」
+              - text: の奏法です。
+            - generic [ref=e175]: DとAの弦を同時に鳴らすのがポイントです。
+            - generic [ref=e176]: 運指のコツ
+            - table [ref=e178]:
+              - rowgroup [ref=e179]:
+                - row "フレット 推奨する指" [ref=e180]:
+                  - columnheader "フレット" [ref=e181]
+                  - columnheader "推奨する指" [ref=e182]
+              - rowgroup [ref=e183]:
+                - row "0 (開放弦) 何も押さえない" [ref=e184]:
+                  - cell "0 (開放弦)" [ref=e185]
+                  - cell "何も押さえない" [ref=e186]
+                - row "3フレット 人差し指（セーハ気味に）" [ref=e187]:
+                  - cell "3フレット" [ref=e188]
+                  - cell "人差し指（セーハ気味に）" [ref=e189]:
+                    - strong [ref=e190]: 人差し指
+                    - text: （セーハ気味に）
+                - row "5フレット 薬指" [ref=e191]:
+                  - cell "5フレット" [ref=e192]
+                  - cell "薬指" [ref=e193]:
+                    - strong [ref=e194]: 薬指
+                - row "6フレット 小指" [ref=e195]:
+                  - cell "6フレット" [ref=e196]
+                  - cell "小指" [ref=e197]:
+                    - strong [ref=e198]: 小指
+            - generic [ref=e199]: リズムについて
+            - list [ref=e200]:
+              - listitem [ref=e201]:
+                - text: テンポは
+                - strong [ref=e202]: ♩＝120前後
+              - listitem [ref=e203]:
+                - strong [ref=e204]: ズンズン・タン
+                - text: というノリの
+                - strong [ref=e205]: 4/4拍子
+              - listitem [ref=e206]:
+                - text: 音と音の間はしっかり
+                - strong [ref=e207]: ミュート
+                - text: して歯切れよく弾くとカッコよく聴こえます！
+            - separator [ref=e208]
+            - blockquote [ref=e209]:
+              - generic [ref=e210]:
+                - text: 💡
+                - strong [ref=e211]: 初心者の方へ
+              - generic [ref=e212]: このリフはギター入門曲の定番です。
+              - generic [ref=e213]: ゆっくりから練習して、徐々にテンポを上げていきましょう！
+      - generic [ref=e28]:
+        - generic [ref=e29]:
+          - textbox "曲名やアーティスト名を入力… (Enter で送信 / Shift+Enter で改行)" [active] [ref=e30]
+          - button "送信" [disabled]:
+            - img
+        - paragraph [ref=e31]: AIが生成するTAB譜は参考情報です。著作権にご注意ください。
+  - button "Open Next.js Dev Tools" [ref=e37] [cursor=pointer]:
+    - img [ref=e38]
+  - alert [ref=e159]

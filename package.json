@@ -1,0 +1,46 @@
+{
+  "name": "next-scaffold",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "type-check": "tsc --noEmit",
+    "docker:build": "docker build -t guitar-tab-bot .",
+    "docker:run": "docker run --rm -p 3000:3000 --env-file .env.local guitar-tab-bot",
+    "gcp:auth": "node scripts/gcp.js auth",
+    "gcp:artifact-repo": "node scripts/gcp.js artifact-repo",
+    "gcp:setup-secret": "node scripts/gcp.js setup-secret",
+    "gcp:setup-github-actions": "node scripts/gcp.js setup-github-actions",
+    "gcp:build": "node scripts/gcp.js build",
+    "gcp:deploy": "node scripts/gcp.js deploy",
+    "gcp:deploy-all": "npm run gcp:build && npm run gcp:deploy"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^4.0.11",
+    "@ai-sdk/react": "^4.0.20",
+    "@base-ui/react": "^1.6.0",
+    "ai": "^7.0.19",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-react": "^1.24.0",
+    "next": "16.2.4",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "shadcn": "^4.13.0",
+    "tailwind-merge": "^3.6.0",
+    "tw-animate-css": "^1.4.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.4",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}

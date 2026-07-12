@@ -1,0 +1,32 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__serena__initial_instructions",
+      "mcp__serena__onboarding",
+      "mcp__serena__read_memory",
+      "mcp__serena__write_memory",
+      "Bash(claude mcp *)",
+      "mcp__context7__resolve-library-id",
+      "Bash(mkdir -p /tmp/ai-chat-backup)",
+      "Bash(cp CLAUDE.md TODO.md /tmp/ai-chat-backup/)",
+      "Bash(npx create-next-app@latest *)",
+      "Bash(npm install *)",
+      "Bash(node -e \"const ai = require\\('ai'\\); console.log\\(Object.keys\\(ai\\).filter\\(k => k.toLowerCase\\(\\).includes\\('message'\\) || k === 'useChat'\\).join\\('\\\\n'\\)\\)\")",
+      "Bash(node -e \"const ai = require\\('ai'\\); const keys = Object.keys\\(ai\\); console.log\\(keys.filter\\(k => !k.startsWith\\('_'\\)\\).sort\\(\\).join\\('\\\\n'\\)\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(NODE_OPTIONS=--use-system-ca npm install @ai-sdk/react)",
+      "Bash(npx tsc *)",
+      "Bash(npm run *)",
+      "mcp__playwright__browser_resize",
+      "mcp__playwright__browser_navigate",
+      "mcp__playwright__browser_take_screenshot",
+      "mcp__playwright__browser_snapshot",
+      "mcp__playwright__browser_click",
+      "mcp__playwright__browser_evaluate",
+      "mcp__playwright__browser_type",
+      "mcp__playwright__browser_press_key",
+      "PowerShell(npm run *)",
+      "mcp__playwright__browser_wait_for"
+    ]
+  }
+}
