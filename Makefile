@@ -9,12 +9,13 @@ PROJECT_ID ?= your-project-id
 REGION     := asia-northeast1
 APP_NAME   := guitar-tab-bot
 IMAGE      := $(REGION)-docker.pkg.dev/$(PROJECT_ID)/$(APP_NAME)/app
+APP_URL    ?= $(NEXT_PUBLIC_APP_URL)
 
 NODE_OPTIONS := --use-system-ca
 
 .PHONY: install dev build type-check \
         docker-build docker-run \
-        gcp-auth artifact-repo cloud-build setup-secret setup-github-actions deploy deploy-all \
+        gcp-auth artifact-repo cloud-build setup-secret setup-mongodb-secret setup-github-actions deploy deploy-all \
         help
 
 # ── ローカル開発 ────────────────────────────────────────────────────────────────
@@ -53,20 +54,24 @@ artifact-repo:			## Artifact Registry リポジトリを作成（初回のみ）
 cloud-build:			## Cloud Build でイメージをビルド & プッシュ
 	gcloud builds submit --tag $(IMAGE)
 
-setup-secret:			## APIキーをSecret Managerに登録 & Cloud Run権限付与（初回のみ）
+setup-secret:			## ANTHROPIC_API_KEYをSecret Managerに登録 & Cloud Run権限付与（初回のみ）
 	node scripts/gcp.js setup-secret
+
+setup-mongodb-secret:		## MONGODB_URIをSecret Managerに登録 & Cloud Run権限付与（初回のみ）
+	node scripts/gcp.js setup-secret MONGODB_URI
 
 setup-github-actions:		## GitHub Actions 用 WIF & SA 設定（初回のみ）
 	node scripts/gcp.js setup-github-actions
 
-deploy:				## Cloud Run にデプロイ（APIキーはSecret Managerから取得）
+deploy:				## Cloud Run にデプロイ（シークレットはSecret Managerから取得）
 	gcloud run deploy $(APP_NAME) \
 		--image $(IMAGE) \
 		--platform managed \
 		--region $(REGION) \
 		--allow-unauthenticated \
 		--port 3000 \
-		--set-secrets ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest
+		--set-secrets ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest,MONGODB_URI=MONGODB_URI:latest \
+		$(if $(APP_URL),--set-env-vars NEXT_PUBLIC_APP_URL=$(APP_URL))
 
 deploy-all: cloud-build deploy	## ビルド & デプロイを一括実行
 

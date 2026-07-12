@@ -5,8 +5,13 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# WIF で OIDC トークンを取得するには workflow レベルで宣言が必要
+# job レベルのみだとリポジトリのデフォルト設定によって id-token が無効になる
+permissions:
+  contents: read
+  id-token: write
+
 env:
-  PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
   REGION: asia-northeast1
   APP_NAME: guitar-tab-bot
   IMAGE: asia-northeast1-docker.pkg.dev/${{ vars.GCP_PROJECT_ID }}/guitar-tab-bot/app
@@ -14,13 +19,13 @@ env:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      id-token: write  # Workload Identity Federation に必要
 
     steps:
       - uses: actions/checkout@v4
 
+      # vars コンテキストは GitHub の
+      # Settings > Secrets and variables > Actions > Variables タブで設定する
+      # (Secrets タブではなく Variables タブ)
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -40,18 +45,24 @@ jobs:
 
       - name: Deploy to Cloud Run
         run: |
+          # NEXT_PUBLIC_APP_URL は GitHub Variables に登録されている場合のみ渡す
+          ENV_FLAGS=""
+          if [ -n "${{ vars.NEXT_PUBLIC_APP_URL }}" ]; then
+            ENV_FLAGS="--set-env-vars NEXT_PUBLIC_APP_URL=${{ vars.NEXT_PUBLIC_APP_URL }}"
+          fi
           gcloud run deploy ${{ env.APP_NAME }} \
             --image ${{ env.IMAGE }}:${{ github.sha }} \
             --platform managed \
             --region ${{ env.REGION }} \
             --allow-unauthenticated \
             --port 3000 \
-            --set-secrets ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest \
-            --project ${{ env.PROJECT_ID }}
+            --set-secrets ANTHROPIC_API_KEY=ANTHROPIC_API_KEY:latest,MONGODB_URI=MONGODB_URI:latest \
+            $ENV_FLAGS \
+            --project ${{ vars.GCP_PROJECT_ID }}
 
       - name: Show service URL
         run: |
           gcloud run services describe ${{ env.APP_NAME }} \
             --region ${{ env.REGION }} \
-            --project ${{ env.PROJECT_ID }} \
+            --project ${{ vars.GCP_PROJECT_ID }} \
             --format "value(status.url)"

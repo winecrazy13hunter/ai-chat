@@ -26,7 +26,22 @@
       "mcp__playwright__browser_type",
       "mcp__playwright__browser_press_key",
       "PowerShell(npm run *)",
-      "mcp__playwright__browser_wait_for"
+      "mcp__playwright__browser_wait_for",
+      "Bash(node -e \"const {execSync}=require\\('child_process'\\);try{execSync\\('npm install mongodb',{stdio:'inherit',env:{...process.env,NODE_OPTIONS:'--use-system-ca'}}\\)}catch\\(e\\){}\")",
+      "Bash(Move-Item *)",
+      "Bash(node *)",
+      "Read(//tmp/**)",
+      "Bash(start /B npm run dev)",
+      "Bash(curl -s http://localhost:3000)",
+      "Bash(docker run *)",
+      "Bash(npx playwright *)",
+      "PowerShell($proc = Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | Select-Object -First 1; if \\($proc\\) { $pid = $proc.OwningProcess; $pname = \\(Get-Process -Id $pid -ErrorAction SilentlyContinue\\).Name; Write-Host \"PID: $pid, Name: $pname\"; Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue; Write-Host \"Killed.\" } else { Write-Host \"Nothing on port 3000.\" })",
+      "PowerShell($conn = Get-NetTCPConnection -LocalPort 3000 -ErrorAction SilentlyContinue | Select-Object -First 1; if \\($conn\\) { $ownerPid = $conn.OwningProcess; $pname = \\(Get-Process -Id $ownerPid -ErrorAction SilentlyContinue\\).Name; Write-Host \"PID: $ownerPid, Name: $pname\"; Stop-Process -Id $ownerPid -Force -ErrorAction SilentlyContinue; Write-Host \"Killed.\" } else { Write-Host \"Nothing on port 3000.\" })",
+      "Bash(Get-ChildItem \"C:\\\\Users\\\\winecrazy\\\\ai-chat\\\\node_modules\\\\ai\\\\dist\")",
+      "Bash(Select-Object Name)",
+      "Bash(Get-ChildItem \"C:\\\\Users\\\\winecrazy\\\\ai-chat\\\\node_modules\\\\ai\" -File)",
+      "Bash(Remove-Item *)",
+      "Bash(grep -v \"//\\\\|sandbox\\\\|test\\\\|sample\")"
     ]
   }
 }

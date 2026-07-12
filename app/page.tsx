@@ -44,12 +44,13 @@ export default function Home() {
   const [sessions, setSessions] = useState<Session[]>([]);
   const [activeSessionId, setActiveSessionId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [storageError, setStorageError] = useState<string | null>(null);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [errorDismissed, setErrorDismissed] = useState(false);
   // Ref keeps activeSessionId accessible in effects without re-triggering them
   const activeIdRef = useRef<string | null>(null);
+  // True when a save is needed but couldn't run because the session wasn't ready yet
+  const pendingSaveRef = useRef(false);
 
-  // v7: api defaults to '/api/chat'. Use HttpChatTransport to override if needed.
   const { messages, sendMessage, stop, status, setMessages, error } = useChat();
 
   useEffect(() => {
@@ -61,88 +62,159 @@ export default function Home() {
     if (error) setErrorDismissed(false);
   }, [error]);
 
-  // Initialize: load sessions on first render and restore the latest session
+  // Initialize: load sessions from DB on first render and restore the latest session
   useEffect(() => {
-    const loaded = getSessions();
-    if (loaded.length === 0) {
-      const session = createSession();
-      setSessions([session]);
-      setActiveSessionId(session.id);
-    } else {
-      setSessions(loaded);
-      setActiveSessionId(loaded[0].id);
-      const msgs = getMessages(loaded[0].id);
-      if (msgs.length > 0) {
-        setMessages(msgs as unknown as UIMessage[]);
+    const init = async () => {
+      try {
+        const loaded = await getSessions();
+        if (loaded.length === 0) {
+          const session = await createSession();
+          setSessions([session]);
+          setActiveSessionId(session.id);
+        } else {
+          setSessions(loaded);
+          setActiveSessionId(loaded[0].id);
+          const msgs = await getMessages(loaded[0].id);
+          if (msgs.length > 0) {
+            setMessages(msgs as unknown as UIMessage[]);
+          }
+        }
+      } catch (err) {
+        setApiError(err instanceof Error ? err.message : 'セッションの読み込みに失敗しました。');
       }
-    }
+    };
+    void init();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-save messages and generate session title when a response finishes
   useEffect(() => {
     const id = activeIdRef.current;
-    if (!id || messages.length === 0 || status !== 'ready') return;
-
-    try {
-      saveMessages(id, toStoredMessages(messages));
-      setStorageError(null);
-    } catch (err) {
-      setStorageError(err instanceof Error ? err.message : 'ストレージエラーが発生しました。');
-    }
-
-    const allSessions = getSessions();
-    const current = allSessions.find((s) => s.id === id);
-    if (current?.title === '新しい会話') {
-      const text = getFirstUserText(messages);
-      if (text) {
-        const title = text.length > 28 ? `${text.slice(0, 28)}…` : text;
-        updateSessionTitle(id, title);
+    if (!id) {
+      // Session not yet ready; mark as pending so we save once the ID is available
+      if (messages.length > 0 && (status === 'ready' || status === 'error')) {
+        pendingSaveRef.current = true;
       }
+      return;
     }
-    setSessions(getSessions());
+    if (messages.length === 0 || (status !== 'ready' && status !== 'error')) return;
+
+    pendingSaveRef.current = false;
+    const save = async () => {
+      try {
+        await saveMessages(id, toStoredMessages(messages));
+        setApiError(null);
+      } catch (err) {
+        setApiError(err instanceof Error ? err.message : 'メッセージの保存に失敗しました。');
+        return;
+      }
+
+      // Update session title from first user message (non-critical: ignore failure)
+      try {
+        const allSessions = await getSessions();
+        const current = allSessions.find((s) => s.id === id);
+        if (current?.title === '新しい会話') {
+          const text = getFirstUserText(messages);
+          if (text) {
+            const title = text.length > 28 ? `${text.slice(0, 28)}…` : text;
+            await updateSessionTitle(id, title);
+          }
+        }
+        setSessions(await getSessions());
+      } catch {
+        // non-critical
+      }
+    };
+    void save();
   }, [messages, status]);
 
-  const handleNewSession = useCallback(() => {
-    const session = createSession();
-    setSessions(getSessions());
-    setActiveSessionId(session.id);
-    setMessages([]);
-    setSidebarOpen(false);
+  // Flush a pending save once the session ID becomes available (handles the race condition
+  // where the user sends a message before the session is fully created on first load)
+  useEffect(() => {
+    const id = activeIdRef.current; // Already updated by the prior effect in this render cycle
+    if (!id || !pendingSaveRef.current) return;
+    if (messages.length === 0 || (status !== 'ready' && status !== 'error')) return;
+
+    pendingSaveRef.current = false;
+    const save = async () => {
+      try {
+        await saveMessages(id, toStoredMessages(messages));
+        setApiError(null);
+      } catch (err) {
+        setApiError(err instanceof Error ? err.message : 'メッセージの保存に失敗しました。');
+        return;
+      }
+      try {
+        const allSessions = await getSessions();
+        const current = allSessions.find((s) => s.id === id);
+        if (current?.title === '新しい会話') {
+          const text = getFirstUserText(messages);
+          if (text) {
+            const title = text.length > 28 ? `${text.slice(0, 28)}…` : text;
+            await updateSessionTitle(id, title);
+          }
+        }
+        setSessions(await getSessions());
+      } catch {
+        // non-critical
+      }
+    };
+    void save();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeSessionId]);
+
+  const handleNewSession = useCallback(async () => {
+    try {
+      const session = await createSession();
+      setSessions(await getSessions());
+      setActiveSessionId(session.id);
+      setMessages([]);
+      setSidebarOpen(false);
+    } catch (err) {
+      setApiError(err instanceof Error ? err.message : 'セッション作成に失敗しました。');
+    }
   }, [setMessages]);
 
   const handleSelectSession = useCallback(
-    (id: string) => {
+    async (id: string) => {
       if (id === activeIdRef.current) {
         setSidebarOpen(false);
         return;
       }
-      stop(); // Abort any ongoing streaming before switching
+      stop();
       setActiveSessionId(id);
-      setMessages(getMessages(id) as unknown as UIMessage[]);
+      try {
+        setMessages((await getMessages(id)) as unknown as UIMessage[]);
+      } catch (err) {
+        setApiError(err instanceof Error ? err.message : 'メッセージの読み込みに失敗しました。');
+      }
       setSidebarOpen(false);
     },
     [setMessages, stop],
   );
 
   const handleDeleteSession = useCallback(
-    (id: string) => {
-      if (id === activeIdRef.current) stop(); // Abort streaming if deleting active session
-      deleteSession(id);
-      const remaining = getSessions();
-      setSessions(remaining);
+    async (id: string) => {
+      if (id === activeIdRef.current) stop();
+      try {
+        await deleteSession(id);
+        const remaining = await getSessions();
+        setSessions(remaining);
 
-      if (id !== activeIdRef.current) return;
+        if (id !== activeIdRef.current) return;
 
-      if (remaining.length > 0) {
-        const next = remaining[0];
-        setActiveSessionId(next.id);
-        setMessages(getMessages(next.id) as unknown as UIMessage[]);
-      } else {
-        const session = createSession();
-        setSessions([session]);
-        setActiveSessionId(session.id);
-        setMessages([]);
+        if (remaining.length > 0) {
+          const next = remaining[0];
+          setActiveSessionId(next.id);
+          setMessages((await getMessages(next.id)) as unknown as UIMessage[]);
+        } else {
+          const session = await createSession();
+          setSessions([session]);
+          setActiveSessionId(session.id);
+          setMessages([]);
+        }
+      } catch (err) {
+        setApiError(err instanceof Error ? err.message : 'セッション削除に失敗しました。');
       }
     },
     [setMessages, stop],
@@ -216,12 +288,12 @@ export default function Home() {
           </div>
         )}
 
-        {/* Storage quota error banner */}
-        {storageError && (
+        {/* Session / API error banner */}
+        {apiError && (
           <div className="flex shrink-0 items-center justify-between border-b border-amber-200 bg-amber-50 px-4 py-2 text-xs text-amber-700 dark:border-amber-900/40 dark:bg-amber-950/40 dark:text-amber-400">
-            <span>{storageError}</span>
+            <span>{apiError}</span>
             <button
-              onClick={() => setStorageError(null)}
+              onClick={() => setApiError(null)}
               className="ml-2 shrink-0 rounded p-0.5 hover:bg-amber-100 dark:hover:bg-amber-900/40"
               aria-label="エラーを閉じる"
             >
