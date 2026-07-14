@@ -1,22 +1,87 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## 開発環境のセットアップ手順
 
-First, run the development server:
+### 前提条件
+
+- Node.js 20 以上
+- npm
+- （Docker での動作確認を行う場合）Docker
+
+### 1. リポジトリのクローン
+
+```bash
+git clone https://github.com/winecrazy13hunter/ai-chat.git
+cd ai-chat
+```
+
+### 2. 依存パッケージのインストール
+
+```bash
+npm install
+```
+
+Mac/Linux では Makefile も利用できます（`make help` でコマンド一覧を表示）。
+
+```bash
+make install
+```
+
+### 3. 環境変数の設定
+
+`.env.example` をコピーして `.env.local` を作成し、必要な値を設定してください。
+
+```bash
+cp .env.example .env.local
+```
+
+| 変数名 | 説明 |
+|--------|------|
+| `ANTHROPIC_API_KEY` | Claude APIキー（必須） |
+| `MONGODB_URI` | MongoDB接続文字列（必須） |
+
+`.env.local` はGit管理対象外（`.gitignore`）のため、各自ローカルで設定してください。
+
+### 4. 開発サーバーの起動
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# または
+make dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+[http://localhost:3000](http://localhost:3000) をブラウザで開いて動作を確認してください。`app/page.tsx` を編集するとページが自動更新されます。
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. 型チェック・Lint
+
+```bash
+npm run type-check
+npm run lint
+# または
+make type-check
+```
+
+### 6. プロダクションビルド
+
+```bash
+npm run build
+# または
+make build
+```
+
+### 7. Dockerでの動作確認（任意）
+
+```bash
+npm run docker:build
+npm run docker:run
+# または
+make docker-build
+make docker-run
+```
+
+[http://localhost:3000](http://localhost:3000) で動作確認できます。
+
+Cloud RunへのデプロイやGitHub Actionsの設定については [CLAUDE.md](./CLAUDE.md) を参照してください。
 
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
