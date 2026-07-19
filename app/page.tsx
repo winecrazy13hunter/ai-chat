@@ -310,9 +310,13 @@ export default function Home() {
 
         <ChatWindow messages={messages} status={status} />
         <MessageInput
-          onSend={(text, files) =>
-            sendMessage({ text: text || undefined, files: files.length > 0 ? files : undefined })
-          }
+          onSend={(text, files) => {
+            if (files.length > 0) {
+              sendMessage({ text, files });
+            } else {
+              sendMessage({ text });
+            }
+          }}
           onStop={stop}
           isStreaming={isStreaming}
         />
