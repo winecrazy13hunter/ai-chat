@@ -16,7 +16,7 @@ import {
   saveMessages,
   updateSessionTitle,
 } from '@/lib/session';
-import type { Session, StoredMessage } from '@/lib/types';
+import type { Session, StoredMessage, StoredMessagePart } from '@/lib/types';
 
 function toStoredMessages(msgs: UIMessage[]): StoredMessage[] {
   return msgs
@@ -25,8 +25,14 @@ function toStoredMessages(msgs: UIMessage[]): StoredMessage[] {
       id: m.id,
       role: m.role as 'user' | 'assistant',
       parts: m.parts
-        .filter((p) => p.type === 'text')
-        .map((p) => ({ type: 'text' as const, text: (p as { type: 'text'; text: string }).text })),
+        .map((p): StoredMessagePart | null => {
+          if (p.type === 'text') return { type: 'text', text: p.text };
+          if (p.type === 'file') {
+            return { type: 'file', mediaType: p.mediaType, url: p.url, filename: p.filename };
+          }
+          return null;
+        })
+        .filter((p): p is StoredMessagePart => p !== null),
       createdAt: new Date().toISOString(),
     }));
 }
@@ -304,7 +310,9 @@ export default function Home() {
 
         <ChatWindow messages={messages} status={status} />
         <MessageInput
-          onSend={(text) => sendMessage({ text })}
+          onSend={(text, files) =>
+            sendMessage({ text: text || undefined, files: files.length > 0 ? files : undefined })
+          }
           onStop={stop}
           isStreaming={isStreaming}
         />
