@@ -3,6 +3,8 @@ import { getDb, type SessionDoc } from '@/lib/mongodb';
 import type { StoredMessage } from '@/lib/types';
 
 const MAX_MESSAGES_PER_SESSION = 200;
+// MongoDBのドキュメントサイズ上限（16MB）を大きく下回るよう安全マージンを確保
+const MAX_MESSAGES_PAYLOAD_BYTES = 12 * 1024 * 1024;
 
 type RouteContext = { params: Promise<{ id: string }> };
 
@@ -34,12 +36,20 @@ export async function PUT(req: Request, { params }: RouteContext) {
     return Response.json({ error: 'messages は配列で指定してください' }, { status: 400 });
   }
 
+  const trimmed = messages.slice(-MAX_MESSAGES_PER_SESSION);
+  if (Buffer.byteLength(JSON.stringify(trimmed), 'utf8') > MAX_MESSAGES_PAYLOAD_BYTES) {
+    return Response.json(
+      { error: '会話履歴のサイズが上限を超えています。添付画像の枚数を減らしてください。' },
+      { status: 413 },
+    );
+  }
+
   const db = await getDb();
   await db.collection<SessionDoc>('sessions').updateOne(
     { _id: id, userId },
     {
       $set: {
-        messages: messages.slice(-MAX_MESSAGES_PER_SESSION),
+        messages: trimmed,
         updatedAt: new Date().toISOString(),
       },
     },

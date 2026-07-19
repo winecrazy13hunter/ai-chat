@@ -6,10 +6,15 @@ export interface Session {
 }
 
 // AI SDK v7 UIMessage uses `parts` for content.
-// We store only text parts (sufficient for this app).
+// We store text parts and image file parts (base64 data URL, already resized/compressed
+// client-side in lib/image.ts to stay well under MongoDB's 16MB document limit).
+export type StoredMessagePart =
+  | { type: 'text'; text: string }
+  | { type: 'file'; mediaType: string; url: string; filename?: string };
+
 export interface StoredMessage {
   id: string;
   role: 'user' | 'assistant';
-  parts: Array<{ type: 'text'; text: string }>;
+  parts: StoredMessagePart[];
   createdAt: string;
 }

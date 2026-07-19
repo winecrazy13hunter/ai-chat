@@ -7,12 +7,34 @@ import {
 import type { UIMessage } from 'ai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { GUITAR_TAB_SYSTEM_PROMPT } from '@/lib/prompts';
+import { MAX_IMAGES_PER_MESSAGE } from '@/lib/attachment-limits';
 
 // In-memory rate limiter (per IP, resets per window)
 const rateLimitMap = new Map<string, { count: number; resetAt: number }>();
 const RATE_LIMIT_MAX = 20;         // requests per window
 const RATE_LIMIT_WINDOW_MS = 60_000; // 1 minute
 const MAX_CONTEXT_MESSAGES = 20;   // last N messages sent to Claude
+
+// 圧縮後の画像1枚あたりのbase64データURL文字数上限（安全マージンとして約8MB相当）
+const MAX_IMAGE_DATA_URL_CHARS = 8 * 1024 * 1024;
+// リクエスト全体のサイズ上限（Content-Lengthベースの早期チェック用）
+const MAX_REQUEST_BYTES = 30 * 1024 * 1024;
+
+function findAttachmentIssue(messages: UIMessage[]): string | null {
+  for (const message of messages) {
+    const fileParts = message.parts.filter((p) => p.type === 'file');
+    if (fileParts.length > MAX_IMAGES_PER_MESSAGE) {
+      return `画像は1メッセージにつき最大${MAX_IMAGES_PER_MESSAGE}枚までです。`;
+    }
+    for (const part of fileParts) {
+      const url = (part as { url?: string }).url ?? '';
+      if (url.length > MAX_IMAGE_DATA_URL_CHARS) {
+        return '添付画像のサイズが大きすぎます。';
+      }
+    }
+  }
+  return null;
+}
 
 function checkRateLimit(ip: string): boolean {
   const now = Date.now();
@@ -55,12 +77,25 @@ export async function POST(req: Request): Promise<Response> {
     );
   }
 
+  const contentLength = Number(req.headers.get('content-length') ?? 0);
+  if (contentLength > MAX_REQUEST_BYTES) {
+    return Response.json(
+      { error: 'リクエストサイズが大きすぎます。画像は5MB以下・最大3枚までにしてください。' },
+      { status: 413 },
+    );
+  }
+
   let messages: UIMessage[];
   try {
     const body = await req.json();
     messages = body.messages ?? [];
   } catch {
     return Response.json({ error: 'リクエストの形式が不正です。' }, { status: 400 });
+  }
+
+  const attachmentIssue = findAttachmentIssue(messages);
+  if (attachmentIssue) {
+    return Response.json({ error: attachmentIssue }, { status: 413 });
   }
 
   try {

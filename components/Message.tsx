@@ -1,11 +1,18 @@
 'use client';
 
+import { useState } from 'react';
+import { X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { UIMessage } from 'ai';
 
 interface Props {
   message: UIMessage;
   isStreaming?: boolean;
+}
+
+interface ImageAttachment {
+  url: string;
+  filename?: string;
 }
 
 type Segment =
@@ -195,10 +202,20 @@ function getText(message: UIMessage): string {
     .join('');
 }
 
+function getImageAttachments(message: UIMessage): ImageAttachment[] {
+  return message.parts
+    .filter((p) => p.type === 'file')
+    .map((p) => p as { type: 'file'; mediaType: string; url: string; filename?: string })
+    .filter((p) => p.mediaType.startsWith('image/'))
+    .map((p) => ({ url: p.url, filename: p.filename }));
+}
+
 export function Message({ message, isStreaming }: Props) {
   const isUser = message.role === 'user';
   const text = getText(message);
   const segments = parseContent(text);
+  const images = getImageAttachments(message);
+  const [expandedUrl, setExpandedUrl] = useState<string | null>(null);
 
   return (
     <div className={cn('flex w-full', isUser ? 'justify-end' : 'justify-start')}>
@@ -210,6 +227,25 @@ export function Message({ message, isStreaming }: Props) {
             : 'bg-zinc-100 text-zinc-900 dark:bg-zinc-800 dark:text-zinc-100',
         )}
       >
+        {images.length > 0 && (
+          <div className="mb-2 flex flex-wrap gap-2">
+            {images.map((img, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => setExpandedUrl(img.url)}
+                className="overflow-hidden rounded-lg border border-black/10 dark:border-white/10"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={img.url}
+                  alt={img.filename ?? '添付画像'}
+                  className="size-24 object-cover"
+                />
+              </button>
+            ))}
+          </div>
+        )}
         {segments.map((seg, i) =>
           seg.type === 'code' ? (
             <pre
@@ -232,6 +268,28 @@ export function Message({ message, isStreaming }: Props) {
           <span className="ml-0.5 inline-block h-3.5 w-0.5 animate-pulse rounded-sm bg-current align-middle" />
         )}
       </div>
+      {expandedUrl && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setExpandedUrl(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setExpandedUrl(null)}
+            className="absolute right-4 top-4 rounded-full bg-white/10 p-2 text-white hover:bg-white/20"
+            aria-label="閉じる"
+          >
+            <X className="size-5" />
+          </button>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={expandedUrl}
+            alt="添付画像の拡大表示"
+            className="max-h-full max-w-full rounded-lg object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
